@@ -41,8 +41,7 @@ The project follows Clean Architecture principles with the following layers:
 - **.NET 8** - Latest .NET framework
 - **ASP.NET Core** - Web API framework
 - **Entity Framework Core** - ORM for database access
-- **PostgreSQL** - Database for Users service
-- **MySQL** - Database for Products service
+- **SQL Server LocalDB** - Unified database for all services
 - **FluentValidation** - Input validation
 - **AutoMapper** - Object-to-object mapping
 - **Swagger/OpenAPI** - API documentation (Users API)
@@ -53,8 +52,7 @@ The project follows Clean Architecture principles with the following layers:
 Before running the project, ensure you have:
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download) or later
-- [PostgreSQL](https://www.postgresql.org/download/) (v12 or later)
-- [MySQL](https://dev.mysql.com/downloads/mysql/) (v8.0 or later)
+- **SQL Server LocalDB** (included with Visual Studio 2022)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) or [Rider](https://www.jetbrains.com/rider/) (optional)
 - [Git](https://git-scm.com/) for version control
 
@@ -67,39 +65,32 @@ git clone <repository-url>
 cd NexCart.Microservice.APIS
 ```
 
-### 2. Configure Databases
+### 2. Configure Database
 
-#### PostgreSQL (Users API)
-Create a database for the Users service:
-```sql
-CREATE DATABASE NexCartUsers;
-```
+The project uses **SQL Server LocalDB** with a single database named **NexCart** for all services.
 
-#### MySQL (Products API)
-Create a database for the Products service:
-```sql
-CREATE DATABASE ecommerceproductsdatabase;
-```
+SQL Server LocalDB is automatically installed with Visual Studio 2022. If you need to install it separately, download it from [Microsoft SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads).
 
-### 3. Update Connection Strings
+The database will be created automatically when you run migrations (next step).
 
-Update the connection strings in `appsettings.json` files if needed:
+### 3. Connection String (Already Configured)
 
-**NexCart.UsersApi/appsettings.json:**
+All services are configured to use the same SQL Server LocalDB instance:
+
 ```json
 "ConnectionStrings": {
-  "PostgresConnection": "Host=localhost; Port=5432; Database=NexCartUsers; Username=postgres; Password=YOUR_PASSWORD"
+  "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=NexCart;Integrated Security=true;TrustServerCertificate=true"
 }
 ```
 
-**NexCart.ProductsApi/appsettings.json:**
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Port=3306;Database=ecommerceproductsdatabase;User=root;Password=YOUR_PASSWORD"
-}
-```
+This connection string:
+- Uses **Windows Authentication** (Integrated Security)
+- Connects to the **NexCart** database
+- No password required (uses your Windows user account)
 
 ### 4. Run Database Migrations
+
+Run migrations for each service to create the necessary tables:
 
 ```bash
 # For Users API
@@ -107,7 +98,13 @@ cd NexCart.UsersApi
 dotnet ef database update
 
 # For Products API
-cd ../NexCart.ProductsApi
+cd ..
+cd NexCart.ProductsApi
+dotnet ef database update
+
+# For Orders API (when implemented)
+cd ..
+cd NexCart.OrdersApi
 dotnet ef database update
 ```
 
@@ -325,25 +322,30 @@ Hello World!
 
 ## 💾 Database Configuration
 
-### Users Service - PostgreSQL
+### SQL Server LocalDB - Unified Database
 
-**Default Connection:**
-- Host: `localhost`
-- Port: `5432`
-- Database: `NexCartUsers`
-- Username: `postgres`
-- Password: `1234` (Change in production!)
+**Connection Details:**
+- **Server:** `(localdb)\MSSQLLocalDB`
+- **Database:** `NexCart`
+- **Authentication:** Windows Authentication (Integrated Security)
+- **Connection String:** `Server=(localdb)\MSSQLLocalDB;Database=NexCart;Integrated Security=true;TrustServerCertificate=true`
 
-### Products Service - MySQL
+**Benefits of using a single database:**
+- ✅ Simplified development and testing
+- ✅ No need to install PostgreSQL or MySQL
+- ✅ Easy data relationships between services (if needed)
+- ✅ Included with Visual Studio 2022
 
-**Default Connection:**
-- Server: `localhost`
-- Port: `3306`
-- Database: `ecommerceproductsdatabase`
-- User: `root`
-- Password: `1234` (Change in production!)
+**All three microservices (Users, Products, Orders) use the same database but maintain separate schemas/tables.**
 
-⚠️ **Security Note:** Update default passwords before deploying to production!
+### Viewing the Database
+
+You can connect to the database using:
+- **SQL Server Object Explorer** in Visual Studio
+- **SQL Server Management Studio (SSMS)**
+- **Azure Data Studio**
+
+Connection string: `(localdb)\MSSQLLocalDB`
 
 ## 📁 Project Structure
 

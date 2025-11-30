@@ -20,7 +20,7 @@ namespace NexCart.Products.Helpers
             //.Replace("$MYSQL_DATABASE", Environment.GetEnvironmentVariable("MYSQL_DATABASE"))
             //.Replace("$MYSQL_PORT", Environment.GetEnvironmentVariable("MYSQL_PORT"));
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseMySQL(configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IProductsRepository, ProductsRepository>();
             return services;

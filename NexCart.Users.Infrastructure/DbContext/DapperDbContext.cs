@@ -1,6 +1,6 @@
 using System.Data;
 using Microsoft.Extensions.Configuration;
-using Npgsql;
+using Microsoft.Data.SqlClient;
 
 namespace NexCart.Users.Infrastructure.DbContext;
 
@@ -12,8 +12,8 @@ public class DapperDbContext : IDisposable
     public DapperDbContext(IConfiguration configuration)
     {
         _configuration = configuration;
-        string connectionString = _configuration.GetConnectionString("PostgresConnection")!;
-        _connection = new NpgsqlConnection(connectionString);
+        string connectionString = _configuration.GetConnectionString("DefaultConnection")!;
+        _connection = new SqlConnection(connectionString);
     }
 
     public IDbConnection Connection => _connection;

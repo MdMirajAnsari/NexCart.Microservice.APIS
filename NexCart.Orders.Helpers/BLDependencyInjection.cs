@@ -11,8 +11,10 @@ namespace NexCart.Orders.Helpers
         public static IServiceCollection AddBusinessLogicLayer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddValidatorsFromAssemblyContaining<OrderAddRequestValidator>();
-            services.AddAutoMapper(typeof(OrderAddRequestToOrderMappingProfile).Assembly);
-            services.AddScoped<IOrdersService, OrdersService>();
+            // TODO: Uncomment when OrderAddRequestToOrderMappingProfile is implemented
+            // services.AddAutoMapper(typeof(OrderAddRequestToOrderMappingProfile).Assembly);
+            // TODO: Uncomment when IOrdersService and OrdersService are implemented
+            // services.AddScoped<IOrdersService, OrdersService>();
             return services;
         }
     }
