@@ -20,16 +20,16 @@ public class AuthController : ControllerBase
     {
         if (registerRequest == null)
         {
-            return BadRequest("Invalid registration data");
+            return BadRequest(new ApiResponse<string>(false, "Invalid registration data", null));
         }
 
         AuthenticationResponse? authenticationResponse = await _usersService.Register(registerRequest);
 
         if (authenticationResponse == null || authenticationResponse.Success == false)
         {
-            return BadRequest(authenticationResponse);
+            return BadRequest(new ApiResponse<AuthenticationResponse?>(false, "Registration failed", authenticationResponse));
         }
-        return Ok(authenticationResponse);
+        return Ok(new ApiResponse<AuthenticationResponse?>(true, "Registration successful", authenticationResponse));
     }
 
     [HttpPost("login")]
@@ -37,13 +37,13 @@ public class AuthController : ControllerBase
     {
         if (loginRequest == null)
         {
-            return BadRequest("Invalid login data");
+            return BadRequest(new ApiResponse<string>(false, "Invalid login data", null));
         }
         AuthenticationResponse? authenticationResponse = await _usersService.Login(loginRequest);
         if (authenticationResponse == null || authenticationResponse.Success == false)
         {
-            return BadRequest(authenticationResponse);
+            return BadRequest(new ApiResponse<AuthenticationResponse?>(false, "Login failed", authenticationResponse));
         }
-        return Ok(authenticationResponse);
+        return Ok(new ApiResponse<AuthenticationResponse?>(true, "Login successful", authenticationResponse));
     }
 }

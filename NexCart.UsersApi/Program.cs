@@ -1,26 +1,16 @@
 using System.Text.Json.Serialization;
-using NexCart.Users.Infrastructure;
-using NexCart.Users.Mappers;
-using NexCart.UsersApi.Middlewares;
-using NextCart.Users.Helpers;
 using FluentValidation.AspNetCore;
+using NexCart.UsersApi.Middlewares;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Infrastructure Services
-builder.Services.AddInfrastructure();
-builder.Services.AddCore();
-
-
-//Add Controllers
+// Add Controllers
 builder.Services.AddControllers().AddJsonOptions(options =>
 { 
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());  
 });
-
-builder.Services.AddAutoMapper(typeof(ApplicationUserMappingProfile).Assembly);
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();

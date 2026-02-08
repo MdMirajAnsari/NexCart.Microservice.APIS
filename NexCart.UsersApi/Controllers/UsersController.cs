@@ -18,14 +18,14 @@ public class UsersController : ControllerBase
     {
         if (userID == Guid.Empty)
         {
-            return BadRequest("Invalid user ID");
+            return BadRequest(new ApiResponse<string>(false, "Invalid user ID", null));
         }
         UserDTO? user = await _usersService.GetUserByUserID(userID);
         if (user == null)
         {
-            return NotFound("User not found");
+            return NotFound(new ApiResponse<string>(false, "User not found", null));
         }
-        return Ok(user);
+        return Ok(new ApiResponse<UserDTO?>(true, "User retrieved", user));
     }
 
 }

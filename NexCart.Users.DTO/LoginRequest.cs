@@ -6,5 +6,16 @@ using System.Threading.Tasks;
 
 namespace NexCart.Users.DTO
 {
-    public record LoginRequest(string? Email, string? Password);
+    public class LoginRequest
+    {
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+
+        public LoginRequest() { }
+        public LoginRequest(string? email, string? password)
+        {
+            Email = email;
+            Password = password;
+        }
+    }
 }

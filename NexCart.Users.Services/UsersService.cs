@@ -1,6 +1,5 @@
-using AutoMapper;
-
 using NexCart.Users.DTO;
+
 using NexCart.Users.Entities;
 using NexCart.Users.RepositoryContracts;
 using NexCart.Users.ServiceContracts;
@@ -10,12 +9,10 @@ namespace NexCart.Users.Services;
 public class UsersService : IUsersService
 {
     private readonly IUsersRepository _usersRepository;
-    private readonly IMapper _mapper;
 
-    public UsersService(IUsersRepository usersRepository, IMapper mapper)
+    public UsersService(IUsersRepository usersRepository)
     {
         _usersRepository = usersRepository;
-        _mapper = mapper;
     }
 
     public async Task<AuthenticationResponse?> Login(LoginRequest loginRequest)
@@ -29,8 +26,7 @@ public class UsersService : IUsersService
         }
         else
         {
-            //return new AuthenticationResponse(user.UserID, user.Email, user.PersonName, user.Gender, "token", Success:true);
-            return _mapper.Map<AuthenticationResponse>(user) with { Success = true, Token = "token" };
+            return new AuthenticationResponse(user.UserId, user.Email, user.PersonName, user.Gender, "token", true);
 
         }
     }
@@ -52,14 +48,13 @@ public class UsersService : IUsersService
         }
         else
         {
-            //return new AuthenticationResponse(registeredUser.UserID, registeredUser.Email, registeredUser.PersonName, registeredUser.Gender, "token", Success: true);
-            return _mapper.Map<AuthenticationResponse>(registeredUser) with { Success = true, Token = "token" };
+            return new AuthenticationResponse(registeredUser.UserId, registeredUser.Email, registeredUser.PersonName, registeredUser.Gender, "token", true);
         }
     }
 
     public async Task<UserDTO> GetUserByUserID(Guid userId)
     {
         ApplicationUser user = await _usersRepository.GetUserByUserId(userId);
-        return _mapper.Map<UserDTO>(user);
+        return new UserDTO(user.UserId, user.Email, user.PersonName, user.Gender ?? string.Empty);
     }
 }
