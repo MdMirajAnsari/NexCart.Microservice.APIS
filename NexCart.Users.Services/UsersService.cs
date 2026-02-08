@@ -26,7 +26,15 @@ public class UsersService : IUsersService
         }
         else
         {
-            return new AuthenticationResponse(user.UserId, user.Email, user.PersonName, user.Gender, "token", true);
+            return new AuthenticationResponse
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                PersonName = user.PersonName,
+                Gender = user.Gender,
+                Token = "token",
+                Success = true
+            };
 
         }
     }
@@ -48,13 +56,31 @@ public class UsersService : IUsersService
         }
         else
         {
-            return new AuthenticationResponse(registeredUser.UserId, registeredUser.Email, registeredUser.PersonName, registeredUser.Gender, "token", true);
+            return new AuthenticationResponse
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                PersonName = user.PersonName,
+                Gender = user.Gender,
+                Token = "token",
+                Success = true
+            };
         }
     }
 
     public async Task<UserDTO> GetUserByUserID(Guid userId)
     {
-        ApplicationUser user = await _usersRepository.GetUserByUserId(userId);
-        return new UserDTO(user.UserId, user.Email, user.PersonName, user.Gender ?? string.Empty);
+        ApplicationUser? user = await _usersRepository.GetUserByUserId(userId);
+
+        if (user == null)
+            return null;
+
+        return new UserDTO
+        {
+            UserId = user.UserId,
+            Email = user.Email,
+            PersonName = user.PersonName,
+            Gender = user.Gender ?? string.Empty
+        };
     }
 }

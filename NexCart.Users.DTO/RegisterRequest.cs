@@ -12,16 +12,6 @@ namespace NexCart.Users.DTO
         public string? Password { get; set; }
         public string? PersonName { get; set; }
         public GenderOptions Gender { get; set; }
-
-        public RegisterRequest() { }
-
-        public RegisterRequest(string? email, string? password, string? personName, GenderOptions gender)
-        {
-            Email = email;
-            Password = password;
-            PersonName = personName;
-            Gender = gender;
-        }
     }
 
 }

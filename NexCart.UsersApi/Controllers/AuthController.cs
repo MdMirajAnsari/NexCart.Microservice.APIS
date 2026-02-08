@@ -16,34 +16,72 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterRequest registerRequest)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
-        if (registerRequest == null)
+        if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponse<string>(false, "Invalid registration data", null));
+            return BadRequest(new ApiResponse<string>
+            {
+                Success = false,
+                Message = "Invalid registration data",
+                Data = null
+            });
         }
 
-        AuthenticationResponse? authenticationResponse = await _usersService.Register(registerRequest);
+        AuthenticationResponse? authenticationResponse =
+            await _usersService.Register(registerRequest);
 
-        if (authenticationResponse == null || authenticationResponse.Success == false)
+        if (authenticationResponse == null || !authenticationResponse.Success)
         {
-            return BadRequest(new ApiResponse<AuthenticationResponse?>(false, "Registration failed", authenticationResponse));
+            return BadRequest(new ApiResponse<AuthenticationResponse?>
+            {
+                Success = false,
+                Message = "Registration failed",
+                Data = authenticationResponse
+            });
         }
-        return Ok(new ApiResponse<AuthenticationResponse?>(true, "Registration successful", authenticationResponse));
+
+        return Ok(new ApiResponse<AuthenticationResponse?>
+        {
+            Success = true,
+            Message = "Registration successful",
+            Data = authenticationResponse
+        });
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest loginRequest)
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
     {
-        if (loginRequest == null)
+        if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponse<string>(false, "Invalid login data", null));
+            return BadRequest(new ApiResponse<string>
+            {
+                Success = false,
+                Message = "Invalid login data",
+                Data = null
+            });
         }
-        AuthenticationResponse? authenticationResponse = await _usersService.Login(loginRequest);
-        if (authenticationResponse == null || authenticationResponse.Success == false)
+
+        AuthenticationResponse? authenticationResponse =
+            await _usersService.Login(loginRequest);
+
+        if (authenticationResponse == null || !authenticationResponse.Success)
         {
-            return BadRequest(new ApiResponse<AuthenticationResponse?>(false, "Login failed", authenticationResponse));
+            return Unauthorized(new ApiResponse<AuthenticationResponse?>
+            {
+                Success = false,
+                Message = "Invalid email or password",
+                Data = null
+            });
         }
-        return Ok(new ApiResponse<AuthenticationResponse?>(true, "Login successful", authenticationResponse));
+
+        return Ok(new ApiResponse<AuthenticationResponse?>
+        {
+            Success = true,
+            Message = "Login successful",
+            Data = authenticationResponse
+        });
     }
+
+
 }

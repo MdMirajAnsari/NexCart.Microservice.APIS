@@ -13,15 +13,6 @@ namespace NexCart.Users.DTO
         public string? PersonName { get; set; }
         public string Gender { get; set; }
 
-        public UserDTO() { }
-
-        public UserDTO(Guid userId, string? email, string? personName, string gender)
-        {
-            UserId = userId;
-            Email = email;
-            PersonName = personName;
-            Gender = gender;
-        }
     }
 
 }

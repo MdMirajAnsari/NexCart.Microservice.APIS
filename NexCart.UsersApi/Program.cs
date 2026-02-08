@@ -1,55 +1,58 @@
-using System.Text.Json.Serialization;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
+using NexCart.Users.Infrastructure;
+using NexCart.Users.ServiceContracts;
 using NexCart.UsersApi.Middlewares;
-
-
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Controllers
-builder.Services.AddControllers().AddJsonOptions(options =>
-{ 
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());  
-});
+// Controllers + JSON
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter());
+    });
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 
-//Add Swagger
+// Swagger ✅
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(); // 🔥 REQUIRED
 
-
-
-//Add Cors
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 
+builder.Services.AddInfrastructure(builder.Configuration);
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// HTTP pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(_=>_.SwaggerEndpoint("/swagger/v1/swagger.json","NexCart.UsersApi v1"));
+    app.UseSwaggerUI(c =>
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NexCart.UsersApi v1"));
 }
 
+// Custom exception middleware
 app.UseExceptionHandlingMiddleware();
 
 app.UseRouting();
 
-app.UseAuthentication();
+// ⚠️ Only keep these if authentication is configured
+// app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 app.Run();

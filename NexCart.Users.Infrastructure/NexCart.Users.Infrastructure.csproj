@@ -19,6 +19,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\NexCart.Users.RepositoryContracts\NexCart.Users.RepositoryContracts.csproj" />
+      <ProjectReference Include="..\NexCart.Users.ServiceContracts\NexCart.Users.ServiceContracts.csproj" />
+      <ProjectReference Include="..\NexCart.Users.Services\NexCart.Users.Services.csproj" />
     </ItemGroup>
 
 </Project>

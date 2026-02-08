@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NexCart.Users.Infrastructure.Repositories;
 using NexCart.Users.RepositoryContracts;
+using NexCart.Users.ServiceContracts;
+using NexCart.Users.Services;
 
 namespace NexCart.Users.Infrastructure;
 
@@ -14,6 +16,7 @@ public static class DependencyInjection
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUsersRepository, UserRepository>();
+        services.AddScoped<IUsersService, UsersService>();
         return services;
     }
 }
