@@ -33,7 +33,6 @@ public class UsersService : IUsersService
                 PersonName = user.PersonName,
                 Gender = user.Gender,
                 Token = "token",
-                Success = true
             };
 
         }
@@ -63,7 +62,6 @@ public class UsersService : IUsersService
                 PersonName = user.PersonName,
                 Gender = user.Gender,
                 Token = "token",
-                Success = true
             };
         }
     }

@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
         AuthenticationResponse? authenticationResponse =
             await _usersService.Register(registerRequest);
 
-        if (authenticationResponse == null || !authenticationResponse.Success)
+        if (authenticationResponse == null)
         {
             return BadRequest(new ApiResponse<AuthenticationResponse?>
             {
@@ -65,7 +65,7 @@ public class AuthController : ControllerBase
         AuthenticationResponse? authenticationResponse =
             await _usersService.Login(loginRequest);
 
-        if (authenticationResponse == null || !authenticationResponse.Success)
+        if (authenticationResponse == null)
         {
             return Unauthorized(new ApiResponse<AuthenticationResponse?>
             {
