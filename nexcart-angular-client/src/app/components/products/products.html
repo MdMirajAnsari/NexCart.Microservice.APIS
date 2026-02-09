@@ -19,9 +19,6 @@
     <button class="btn btn-link" (click)="loadProducts()">Reset</button>
   </div>
 
-  @if (loading()) {
-    <div class="loading">Loading...</div>
-  }
   @if (error()) {
     <div class="error">{{ error() }}</div>
   }
@@ -70,7 +67,7 @@
     }
   </div>
 
-  @if (filteredProducts().length === 0 && !loading()) {
+  @if (filteredProducts().length === 0) {
     <div class="empty-state">
       <p>No products found.</p>
     </div>
