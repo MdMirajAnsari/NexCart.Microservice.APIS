@@ -2,7 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using NexCart.Orders.Validators;
 using FluentValidation;
-
+using NexCart.Orders.ServiceContracts;
+using NexCart.Orders.Services;
 
 namespace NexCart.Orders.Helpers
 {
@@ -11,10 +12,9 @@ namespace NexCart.Orders.Helpers
         public static IServiceCollection AddBusinessLogicLayer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddValidatorsFromAssemblyContaining<OrderAddRequestValidator>();
-            // TODO: Uncomment when OrderAddRequestToOrderMappingProfile is implemented
-            // services.AddAutoMapper(typeof(OrderAddRequestToOrderMappingProfile).Assembly);
-            // TODO: Uncomment when IOrdersService and OrdersService are implemented
-            // services.AddScoped<IOrdersService, OrdersService>();
+            services.AddAutoMapper(typeof(NexCart.Orders.Mappers.OrderToOrderResponseMappingProfile));
+
+            services.AddScoped<IOrdersService, OrdersService>();
             return services;
         }
     }

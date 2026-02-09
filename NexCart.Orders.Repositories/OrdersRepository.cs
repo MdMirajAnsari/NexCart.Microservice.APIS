@@ -1,72 +1,80 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using NexCart.Orders.Entities;
 using NexCart.Orders.RepositoryContracts;
 
-
 namespace NexCart.Orders.Repositories
 {
+    public class OrdersDbContext : DbContext
+    {
+        public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
+        {
+        }
+
+        public DbSet<Order> Orders { get; set; }
+    }
+
     public class OrdersRepository : IOrdersRepository
     {
-        private readonly IMongoCollection<Order> _orders;
-        private readonly string collectionName = "orders";
-        public OrdersRepository(IMongoDatabase mongoDatabase)
+        private readonly OrdersDbContext _context;
+
+        public OrdersRepository(OrdersDbContext context)
         {
-            _orders = mongoDatabase.GetCollection<Order>(collectionName);
+            _context = context;
         }
+
         public async Task<Order?> AddOrder(Order order)
         {
             order.OrderID = Guid.NewGuid();
-            order._id = order.OrderID;
             foreach (OrderItem orderItem in order.OrderItems)
             {
                 orderItem._id = Guid.NewGuid();
             }
-            await _orders.InsertOneAsync(order);
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
             return order;
-
         }
 
         public async Task<bool> DeleteOrder(Guid orderID)
         {
-            FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(temp => temp.OrderID, orderID);
-
-            Order? existingOrder = await _orders.Find(filter).FirstOrDefaultAsync();
-
-            if (existingOrder != null)
+            Order? existingOrder = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == orderID);
+            if (existingOrder == null)
             {
                 return false;
             }
-            DeleteResult deleteResult = await _orders.DeleteOneAsync(filter);
-            return deleteResult.DeletedCount > 0;
+            _context.Orders.Remove(existingOrder);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<IEnumerable<Order?>> GetOrderByCondition(FilterDefinition<Order> filter)
+        public async Task<Order?> GetOrderByCondition(Expression<Func<Order, bool>> predicate)
         {
-            return (IEnumerable<Order?>)(await _orders.FindAsync(filter)).FirstOrDefault();
+            return await _context.Orders.FirstOrDefaultAsync(predicate);
         }
 
         public async Task<IEnumerable<Order?>> GetOrders()
         {
-            return await _orders.Find(_ => true).ToListAsync();
+            return await _context.Orders.ToListAsync();
         }
 
-        public async Task<IEnumerable<Order?>> GetOrdersByCondition(FilterDefinition<Order> filter)
+        public async Task<IEnumerable<Order?>> GetOrdersByCondition(Expression<Func<Order, bool>> predicate)
         {
-            return (IEnumerable<Order?>)(await _orders.FindAsync(filter)).ToListAsync();
+            return await _context.Orders.Where(predicate).ToListAsync();
         }
 
         public async Task<Order?> UpdateOrder(Order order)
         {
-            FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(temp => temp.OrderID, order.OrderID);
-
-            Order? existingOrder = await _orders.Find(filter).FirstOrDefaultAsync();
-
+            Order? existingOrder = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == order.OrderID);
             if (existingOrder == null)
             {
                 return null;
             }
-            ReplaceOneResult replaceOneResult = await _orders.ReplaceOneAsync(filter, order);
-            return replaceOneResult.IsAcknowledged ? order : null;
+            existingOrder.OrderDate = order.OrderDate;
+            existingOrder.TotalBill = order.TotalBill;
+            existingOrder.UserID = order.UserID;
+            existingOrder.OrderItems = order.OrderItems;
+            await _context.SaveChangesAsync();
+            return existingOrder;
         }
     }
 }

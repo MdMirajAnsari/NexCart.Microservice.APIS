@@ -1,4 +1,4 @@
-﻿using MongoDB.Driver;
+﻿using System.Linq.Expressions;
 using NexCart.Orders.Entities;
 
 namespace NexCart.Orders.RepositoryContracts
@@ -8,38 +8,36 @@ namespace NexCart.Orders.RepositoryContracts
         /// <summary>
         /// Retrieves all Orders asynchronously
         /// </summary>
-        /// <returns>Returns all orders from the orders collection</returns>
+        /// <returns>Returns all orders</returns>
         Task<IEnumerable<Order>> GetOrders();
-
 
         /// <summary>
         /// Retrieves all Orders based on the specified condition asynchronously
         /// </summary>
-        /// <param name="filter">The condition to filter orders</param>
+        /// <param name="predicate">The condition to filter orders</param>
         /// <returns>Returning a collection of matching orders</returns>
-        Task<IEnumerable<Order?>> GetOrdersByCondition(FilterDefinition<Order> filter);
-
+        Task<IEnumerable<Order?>> GetOrdersByCondition(Expression<Func<Order, bool>> predicate);
 
         /// <summary>
         /// Retrieves a single order based on the specified condition asynchronously
         /// </summary>
-        /// <param name="filter">The condition to filter Orders</param>
+        /// <param name="predicate">The condition to filter Orders</param>
         /// <returns>Returning matching order</returns>
-        Task<IEnumerable<Order?>> GetOrderByCondition(FilterDefinition<Order> filter);
+        Task<Order?> GetOrderByCondition(Expression<Func<Order, bool>> predicate);
 
 
         /// <summary>
-        /// Adds a new Order into the Orders collection asynchronously
+        /// Adds a new Order asynchronously
         /// </summary>
         /// <param name="order">The order to be added</param>
-        /// <returns>Returnes the added Order object or null if unsuccessful</returns>
+        /// <returns>Returns the added Order object or null if unsuccessful</returns>
         Task<Order?> AddOrder(Order order);
 
 
         /// <summary>
         /// Updates an existing order asynchronously
         /// </summary>
-        /// <param name="order">The order to be added</param>
+        /// <param name="order">The order to be updated</param>
         /// <returns>Returns the updated order object; or null if not found</returns>
         Task<Order?> UpdateOrder(Order order);
 

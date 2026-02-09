@@ -8,6 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexCart.Orders.Helpers\NexCart.Orders.Helpers.csproj" />
+    <ProjectReference Include="..\NexCart.Orders.Services\NexCart.Orders.Services.csproj" />
+    <ProjectReference Include="..\NexCart.Orders.ServiceContracts\NexCart.Orders.ServiceContracts.csproj" />
+    <ProjectReference Include="..\NexCart.Orders.DTO\NexCart.Orders.DTO.csproj" />
+    <ProjectReference Include="..\NexCart.Orders.Entities\NexCart.Orders.Entities.csproj" />
   </ItemGroup>
 
 </Project>
