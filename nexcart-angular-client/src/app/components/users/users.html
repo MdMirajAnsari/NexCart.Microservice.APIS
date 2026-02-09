@@ -1,0 +1,44 @@
+<div class="users-container">
+  <div class="header">
+    <h2>Users</h2>
+  </div>
+
+  <div class="search-section">
+    <div class="search-form">
+      <input
+        type="text"
+        [ngModel]="userId()"
+        (ngModelChange)="userId.set($event)"
+        placeholder="Enter User ID (GUID)"
+        class="search-input"
+        (keyup.enter)="getUser()"
+      />
+      <button class="btn btn-primary" (click)="getUser()">Get User</button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Loading...</div>
+  }
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+
+  @if (user()) {
+    <div class="user-card">
+      <h3>User Details</h3>
+      <div class="user-info">
+        <p><strong>User ID:</strong> {{ user()!.userId }}</p>
+        <p><strong>Email:</strong> {{ user()!.email || 'N/A' }}</p>
+        <p><strong>Name:</strong> {{ user()!.personName || 'N/A' }}</p>
+        <p><strong>Gender:</strong> {{ user()!.gender || 'N/A' }}</p>
+      </div>
+    </div>
+  } @else {
+    @if (!loading() && !error()) {
+      <div class="empty-state">
+        <p>Enter a User ID to search for a user.</p>
+      </div>
+    }
+  }
+</div>

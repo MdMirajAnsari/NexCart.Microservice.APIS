@@ -1,0 +1,93 @@
+<div class="orders-container">
+  <div class="header">
+    <h2>Orders</h2>
+    <button class="btn btn-primary" (click)="toggleCreateForm()">
+      @if (showCreateForm()) { Cancel } @else { Create Order }
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Loading...</div>
+  }
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+
+  @if (showCreateForm()) {
+    <div class="create-form">
+      <h3>Create New Order</h3>
+      <div class="form-group">
+        <label>User ID:</label>
+        <input type="text" [ngModel]="newOrder().userID" (ngModelChange)="updateOrderUserId($event)" class="form-control" placeholder="Enter user GUID" />
+      </div>
+      <div class="form-group">
+        <label>Order Date:</label>
+        <input type="datetime-local" [ngModel]="newOrder().orderDate" (ngModelChange)="updateOrderDate($event)" class="form-control" />
+      </div>
+
+      <div class="order-items-section">
+        <h4>Order Items</h4>
+        <div class="add-item-form">
+          <select [ngModel]="selectedProductId()" (ngModelChange)="selectedProductId.set($event); onProductSelect()" class="form-control">
+            <option value="">Select a product</option>
+            @for (product of availableProducts(); track product.productID) {
+              <option [value]="product.productID">
+                {{ product.productName }} - ${{ product.unitPrice?.toFixed(2) }}
+              </option>
+            }
+          </select>
+          <input type="number" [ngModel]="selectedQuantity()" (ngModelChange)="selectedQuantity.set($event)" placeholder="Quantity" class="form-control" min="1" />
+          <input type="number" [ngModel]="selectedUnitPrice()" (ngModelChange)="selectedUnitPrice.set($event)" placeholder="Unit Price" class="form-control" step="0.01" />
+          <button class="btn btn-secondary" (click)="addOrderItem()">Add Item</button>
+        </div>
+
+        @if (newOrder().orderItems.length > 0) {
+          <div class="order-items-list">
+            @for (item of newOrder().orderItems; let i = $index; track i) {
+              <div class="order-item">
+                <span>Product: {{ item.productID }}</span>
+                <span>Qty: {{ item.quantity }}</span>
+                <span>Price: ${{ item.unitPrice.toFixed(2) }}</span>
+                <span>Total: ${{ (item.quantity * item.unitPrice).toFixed(2) }}</span>
+                <button class="btn-delete" (click)="removeOrderItem(i)">×</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <button class="btn btn-primary" (click)="createOrder()">Create Order</button>
+    </div>
+  }
+
+  <div class="orders-list">
+    @for (order of orders(); track order.orderID) {
+      <div class="order-card">
+        <div class="order-header">
+          <h3>Order #{{ order.orderID.substring(0, 8) }}</h3>
+          <span class="order-date">{{ formatDate(order.orderDate) }}</span>
+        </div>
+        <div class="order-body">
+          <p><strong>User:</strong> {{ order.userPersonName || order.email || order.userID }}</p>
+          <p><strong>Total Bill:</strong> ${{ order.totalBill.toFixed(2) }}</p>
+          <div class="order-items">
+            <h4>Items:</h4>
+            @for (item of order.orderItems; track item.productID) {
+              <div class="order-item-detail">
+                <span>{{ item.productName || 'Product ' + item.productID.substring(0, 8) }}</span>
+                <span>Qty: {{ item.quantity }}</span>
+                <span>${{ item.totalPrice.toFixed(2) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (orders().length === 0 && !loading()) {
+    <div class="empty-state">
+      <p>No orders found.</p>
+    </div>
+  }
+</div>
