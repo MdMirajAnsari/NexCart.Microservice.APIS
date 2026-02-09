@@ -1,10 +1,8 @@
-using NexCart.ProductsApi.APIEndpoints;
 using NexCart.ProductsApi.Middleware;
 using NexCart.Products.Helpers;
 using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
-
 
 //ADD DAL AND BAL SERVICES
 builder.Services.AddDataAccessLayer(builder.Configuration);
@@ -21,16 +19,23 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+// Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 app.UseExceptionHandlingMiddleware();
 app.UseRouting();
+
+// Swagger middleware — enable in all environments so UI is reachable when launched
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NexCart.ProductsApi v1"));
 
 //Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapProductAPIEndpoints();
 
 app.Run();

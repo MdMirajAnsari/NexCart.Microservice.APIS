@@ -45,9 +45,10 @@ namespace NexCart.Products.Repositories
             return await _context.Products.ToListAsync();
         }
 
+        // Repository: force client evaluation (careful: loads all products)
         public async Task<IEnumerable<Product?>> GetProductsByCondition(Expression<Func<Product, bool>> conditionexpression)
         {
-            return await _context.Products.Where(conditionexpression).ToListAsync();
+            return _context.Products.AsEnumerable().Where(conditionexpression.Compile()).ToList();
         }
 
         public async Task<Product?> UpdateProduct(Product product)
@@ -66,6 +67,18 @@ namespace NexCart.Products.Repositories
                 await _context.SaveChangesAsync();
                 return existingProduct;
             }
+        }
+
+        public async Task<IEnumerable<Product?>> SearchProducts(string searchString)
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+            {
+                return await GetProducts();
+            }
+
+            string s = searchString.ToLower();
+            return await GetProductsByCondition(
+                k => k.ProductName != null && k.ProductName.ToLower().Contains(s));
         }
     }
 }

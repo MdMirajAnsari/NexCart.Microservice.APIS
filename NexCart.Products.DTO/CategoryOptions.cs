@@ -8,5 +8,6 @@ namespace NexCart.Products.DTO
         HomeAppliances,
         Furniture,
         Accessories,
+        Computers
     }
 }

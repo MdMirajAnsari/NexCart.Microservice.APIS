@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using NexCart.Products.DTO;
 using NexCart.Products.Entities;
+using System;
 
 
 namespace NexCart.Products.Mappers
@@ -9,12 +10,28 @@ namespace NexCart.Products.Mappers
     {
         public ProductToProductResponseMappingProfile()
         {
-            CreateMap<Product, ProductResponse>().ForMember(dest => dest.ProductID, opt => opt.MapFrom(src => src.ProductID))
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
-                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
-                .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
-                .ForMember(dest => dest.QuantityInStock, opt => opt.MapFrom(src => src.QuantityInStock))
-                .ForMember(dest => dest.ProductID, opt => opt.MapFrom(src => src.ProductID));
+            CreateMap<Product, ProductResponse>()
+                .ConstructUsing(src => new ProductResponse(
+                    src.ProductID,
+                    src.ProductName,
+                    ParseCategory(src.Category),
+                    src.UnitPrice,
+                    src.QuantityInStock
+                ));
+        }
+
+        private static CategoryOptions ParseCategory(string? category)
+        {
+            if (string.IsNullOrWhiteSpace(category)) return CategoryOptions.Accessories;
+            if (Enum.TryParse<CategoryOptions>(category, true, out var result)) return result;
+            // fallback: try mapping common synonyms
+            var normalized = category.Trim();
+            return normalized switch
+            {
+                "Computer" or "Computers" => CategoryOptions.Electronics,
+                "Home Appliance" or "Home Appliances" => CategoryOptions.HomeAppliances,
+                _ => CategoryOptions.Accessories,
+            };
         }
     }
 }

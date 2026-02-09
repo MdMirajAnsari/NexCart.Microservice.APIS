@@ -1,5 +1,4 @@
-﻿
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using NexCart.Products.DTO;
 using NexCart.Products.Mappers;
@@ -15,7 +14,7 @@ namespace NexCart.Products.Helpers
     {
         public static IServiceCollection AddDataBusinessLogicLayer(this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(ProductAddRequestToProductMappingProfile).Assembly);
+            services.AddAutoMapper(cfg => { }, typeof(ProductAddRequestToProductMappingProfile).Assembly);
             services.AddValidatorsFromAssemblyContaining<ProductAddRequestValidator>();
             //services.AddTransient<IValidator<ProductAddRequest>, ProductAddRequestValidator>();
 
