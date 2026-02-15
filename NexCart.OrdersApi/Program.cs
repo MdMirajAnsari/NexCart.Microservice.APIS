@@ -1,27 +1,47 @@
 using NexCart.Orders.Helpers;
 using Microsoft.AspNetCore.Builder;
 
-var builder = WebApplication.CreateBuilder(args);
+using NLog;
+using NLog.Web;
 
-// Register data access and business logic for Orders service
-builder.Services.AddDataAccessLayer(builder.Configuration);
-builder.Services.AddBusinessLogicLayer(builder.Configuration);
+var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+try
+{
+    logger.Debug("init main");
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    // Register data access and business logic for Orders service
+    builder.Services.AddDataAccessLayer(builder.Configuration);
+    builder.Services.AddBusinessLogicLayer(builder.Configuration);
 
-var app = builder.Build();
+    builder.Services.AddControllers();
 
-app.UseRouting();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-// Enable Swagger UI
-app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NexCart.OrdersApi v1"));
+    var app = builder.Build();
 
-app.UseAuthorization();
+    app.UseRouting();
 
-app.MapControllers();
+    // Enable Swagger UI
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NexCart.OrdersApi v1"));
 
-app.Run();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    logger.Error(ex, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    NLog.LogManager.Shutdown();
+}

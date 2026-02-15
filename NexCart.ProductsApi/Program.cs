@@ -2,7 +2,14 @@ using NexCart.ProductsApi.Middleware;
 using NexCart.Products.Helpers;
 using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
-var builder = WebApplication.CreateBuilder(args);
+using NLog;
+using NLog.Web;
+
+var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+try
+{
+    logger.Debug("init main");
+    var builder = WebApplication.CreateBuilder(args);
 
 //ADD DAL AND BAL SERVICES
 builder.Services.AddDataAccessLayer(builder.Configuration);
