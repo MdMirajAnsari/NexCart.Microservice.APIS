@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using NLog;
 using NLog.Web;
 
-var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 try
 {
     logger.Debug("init main");
@@ -46,6 +46,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
     var app = builder.Build();
+
+    logger.Info("NexCart.UsersApi starting");
 
     // HTTP pipeline
     if (app.Environment.IsDevelopment())

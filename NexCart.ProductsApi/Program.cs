@@ -5,7 +5,7 @@ using FluentValidation.AspNetCore;
 using NLog;
 using NLog.Web;
 
-var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 try
 {
     logger.Debug("init main");
@@ -30,7 +30,9 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+    var app = builder.Build();
+
+    logger.Info("NexCart.ProductsApi starting");
 
     app.UseExceptionHandlingMiddleware();
     app.UseMiddleware<NexCart.ProductsApi.Middleware.RequestLoggingMiddleware>();

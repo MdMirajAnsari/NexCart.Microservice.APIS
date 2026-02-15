@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using NLog;
 using NLog.Web;
 
-var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 try
 {
     logger.Debug("init main");
@@ -23,6 +23,7 @@ try
     builder.Services.AddSwaggerGen();
 
     var app = builder.Build();
+    logger.Info("NexCart.OrdersApi starting");
 
     app.UseMiddleware<NexCart.OrdersApi.Middlewares.RequestLoggingMiddleware>();
     app.UseRouting();
