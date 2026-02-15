@@ -18,8 +18,9 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-          
-            throw new Exception(message: ex.Message, innerException: ex);  
+            // Log and rethrow to let global handlers capture if needed
+            // If NLog is configured, it will capture unhandled exceptions
+            throw new Exception(message: ex.Message, innerException: ex);
         }
     }
     

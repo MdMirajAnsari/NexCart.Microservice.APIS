@@ -58,6 +58,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
     // Custom exception middleware
     app.UseExceptionHandlingMiddleware();
 
+    // Request/response logging middleware
+    app.UseMiddleware<NexCart.UsersApi.Middlewares.RequestLoggingMiddleware>();
+
     app.UseRouting();
 
     // ⚠️ Only keep these if authentication is configured

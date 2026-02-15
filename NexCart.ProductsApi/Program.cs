@@ -32,8 +32,9 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseExceptionHandlingMiddleware();
-app.UseRouting();
+    app.UseExceptionHandlingMiddleware();
+    app.UseMiddleware<NexCart.ProductsApi.Middleware.RequestLoggingMiddleware>();
+    app.UseRouting();
 
 // Swagger middleware — enable in all environments so UI is reachable when launched
 app.UseSwagger();

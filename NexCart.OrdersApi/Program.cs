@@ -24,6 +24,7 @@ try
 
     var app = builder.Build();
 
+    app.UseMiddleware<NexCart.OrdersApi.Middlewares.RequestLoggingMiddleware>();
     app.UseRouting();
 
     // Enable Swagger UI
