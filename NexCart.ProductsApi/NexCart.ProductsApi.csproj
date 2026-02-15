@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NexCart.Products.Helpers\NexCart.Products.Helpers.csproj" />
     <ProjectReference Include="..\NexCart.Products.ServiceContracts\NexCart.Products.ServiceContracts.csproj" />
   </ItemGroup>

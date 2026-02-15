@@ -39,6 +39,14 @@ public class RequestLoggingMiddleware
 
         try
         {
+            if (!context.Request.Headers.TryGetValue("X-Correlation-ID", out var cid))
+            {
+                cid = Guid.NewGuid().ToString();
+                context.Request.Headers["X-Correlation-ID"] = cid;
+            }
+            using var scope = _logger.BeginScope(new Dictionary<string, object> { ["CorrelationId"] = cid.ToString() });
+            NLog.MappedDiagnosticsLogicalContext.Set("CorrelationId", cid.ToString());
+
             await _next(context);
         }
         finally
